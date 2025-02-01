@@ -75,15 +75,52 @@
     console.table(oldest);
 
     // 6. create a list of Boulevards in Paris that contain 'de' anywhere in the name
-    // https://en.wikipedia.org/wiki/Category:Boulevards_in_Paris
+    //const category = document.querySelector('.mw-category');
 
+    // can call any query selector on any existing DOM element to look inside of that element
+    // could easily do '.mw-category a' and it would work too
+
+    // will convert the list of names from a NodeList into an array so they can be filtered to include only the ones with "de"
+
+    //const links = Array.from(category.querySelectorAll('a'));
+
+    // could also use a spread to convert links into an array
+    // const links = [...(category.querySelectorAll('a')];
+
+    //const de = links
+                 // .map(link => link.textContent) // this will return only the text inside the link
+                 // .filter(streetName => streetName.includes('de'));
+
+    //console.table(de);
 
     // 7. sort Exercise
     // Sort the people alphabetically by last name
+    const alpha = people.sort((lastOne, nextOne) => {
+      const [aLast, aFirst] = lastOne.split(', '); // destructure so the last name and first name are in their own variables
+      const [bLast, bFirst] = nextOne.split(', '); //.split() breaks it apart at the comma and space
+      return aLast > bLast ? 1 : -1;
+    });
+
+    console.table(alpha);
 
     // 8. Reduce Exercise
     // Sum up the instances of each of these
     const data = ['car', 'car', 'truck', 'truck', 'bike', 'walk', 'car', 'van', 'bike', 'walk', 'car', 'van', 'car', 'truck' ];
+
+    const transportation = data.reduce(function(obj, item){
+      if(!obj[item]) {
+        obj[item] = 0; // initalize the items in the object to zero
+      }
+        obj[item]++; // if there is, increment it and move it along
+      return obj;
+    }, {});
+    // {} = starts with a blank object
+    // every time we loop over an object we see if there is one there
+    // if not, make an entry for that object and set it to 1
+    // then increment it as the loop continues
+    // end of loop will show the total number of objects returned at the end
+
+    console.log(transportation);
 
   </script>
 </body>
