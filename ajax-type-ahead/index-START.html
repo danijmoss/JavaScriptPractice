@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Type Ahead 👀</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="https://fav.farm/🔥" />
+</head>
+<body>
+
+  <form class="search-form">
+    <input type="text" class="search" placeholder="City or State">
+    <ul class="suggestions">
+      <li>Filter for a city</li>
+      <li>or a state</li>
+    </ul>
+  </form>
+<script>
+const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+
+const cities = [];
+
+// using a fetch request that is built into the browser
+// returns a promise
+// const prom = fetch(endpoint);
+// console.log(prom);
+
+fetch(endpoint)
+  // returns a "blob" of raw data that needs to be converted into JSON
+  .then(blob => blob.json())  // blob.json() returns another promise
+  // now has the raw data to work with - use spread to add the data to cities array
+  .then(data => cities.push(...data));
+
+ // find the match for what is searched when typed in the search bar 
+function findMatches(wordToMatch, cities) {
+  return cities.filter(place => {
+    // here is where we need to figure out if the city or state matches what was searched
+    // need to create a regular expression to help match the searched word
+    // g = global (look through the entire string typed), i = insensitive - matches lower case or upper case letters
+    const regex = new RegExp(wordToMatch, 'gi') 
+    // will look for the "city" key or the "state key in the JSON and try to match what is typed
+    return place.city.match(regex) || place.state.match(regex);
+  });
+}
+
+// add commas to the population
+function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+// will be called when someone changes the value of what is in the search box
+function displayMatches() {
+  const matchArray = findMatches(this.value, cities); // get the data to display
+  // create the html that will be displayed in the dropdown that matches
+  const html = matchArray.map(place => {
+    // to highlight what you are searching
+    // create a regular expression to get the search term reguardless of upper or lowe case type
+    const regex = new RegExp(this.value, 'gi');
+    // replace the regex with a span with a class of highlight (hl) with the searched term
+    const cityName = place.city.replace(regex, `<span class="hl">${this.value}</span>`);
+    const stateName = place.state.replace(regex, `<span class="hl">${this.value}</span>`);
+
+    return `
+      <li>
+        <span class="name">${cityName}, ${stateName}</span>  
+        <span class="population">Pop: ${numberWithCommas(place.population)}</span>
+      </li>
+    `
+  }).join(''); // .join() turns the array into one big string separated with a space
+  suggestions.innerHTML = html; // display the results with the created html
+}
+
+// select the search input and the suggestions ul
+const searchInput = document.querySelector('.search');
+const suggestions = document.querySelector('.suggestions');
+
+// when the input changes, run findMatches function
+searchInput.addEventListener('change', displayMatches); // fires when clicking outside the search box
+searchInput.addEventListener('keyup', displayMatches);  // fires when done typing
+
+</script>
+</body>
+</html>
