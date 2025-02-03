@@ -59,7 +59,7 @@ function displayMatches() {
     // replace the regex with a span with a class of highlight (hl) with the searched term
     const cityName = place.city.replace(regex, `<span class="hl">${this.value}</span>`);
     const stateName = place.state.replace(regex, `<span class="hl">${this.value}</span>`);
-
+    // return the list object with the html you want to display
     return `
       <li>
         <span class="name">${cityName}, ${stateName}</span>  
