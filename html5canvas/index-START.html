@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTML5 Canvas</title>
+  <link rel="icon" href="https://fav.farm/🔥" />
+</head>
+<body>
+<canvas id="draw" width="800" height="800"></canvas>
+<script>
+  const canvas = document.querySelector('#draw');
+
+  // getting the context = what you draw on with HTML canvas
+  const ctx = canvas.getContext('2d');
+
+  // canvas size
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  // base settings
+  ctx.strokeStyle = '#BADA55'; // stroke color
+  ctx.lineJoin = 'round'; // should the line be round or square when connected together
+  ctx.lineCap = 'round'; // should the end of the line be round or square
+  ctx.lineWidth = 100; // line width is large
+  //ctx.globalCompositeOperator = 'multiply'; // blend modes
+
+  // Starting variables
+  let isDrawing = false; // set to true when clicking down on the canvas, false when not clicking on the canvas
+  
+  // where do you start and stop the line you draw
+  let lastX = 0;
+  let lastY = 0;
+
+  // start for the hue
+  let hue = 0;
+
+  // starter for the line width
+  let direction = true;
+
+  // called when mouse is moved on the canvas
+  function draw(e) {
+    // stops function from running if the mouse is not clicking down
+    if(!isDrawing) return;
+    console.log(e);
+
+    // update the hue as you draw
+    ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+
+    // draws lines on the canvas
+    ctx.beginPath();
+    // start from 
+    ctx.moveTo(lastX, lastY);
+    // go to
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.stroke();
+
+    // update where to start the new line
+    // destructuring an array (same as setting lastX = e.offsetX; and lastY = e.offsetY;)
+    [lastX, lastY] = [e.offsetX, e.offsetY]; 
+
+    // change the hue as you draw
+    hue++;
+
+    // reset back to the beginning to restart the hue from red
+    if (hue >= 360) hue = 0;
+
+    // loops the line width size
+    if (ctx.lineWidth >= 100 || ctx.lineWidth <= 1 ){
+      
+      // if the line width is maxed out or is less than 1 change the direction
+      direction = !direction;
+    }
+    
+    // increase line width
+    if (direction) {
+      ctx.lineWidth++;
+    } else {
+      ctx.lineWidth--; 
+    }
+
+  }
+
+  // mouse clicking down on canvas
+  canvas.addEventListener('mousedown', (e) => {
+    isDrawing = true;
+    [lastX, lastY] = [e.offsetX, e.offsetY]; 
+    
+  }); 
+  canvas.addEventListener('mousemove', draw);  // called when mouse is on the canvas
+  canvas.addEventListener('mouseup', () => isDrawing = false);  // mouse not clicking on canvas
+  canvas.addEventListener('mouseout', () => isDrawing = false); // mouse leaving the canvas window
+
+</script>
+
+<style>
+  html, body {
+    margin: 0;
+  }
+</style>
+
+</body>
+</html>
