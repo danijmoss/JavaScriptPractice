@@ -9,7 +9,7 @@ const ranges = player.querySelectorAll('.player__slider');
 const fullScreen = player.querySelector('.fullscreen');
 
 let isUpdating = false;
-//let isPlaying = false;
+let isFullScreen = false;
 let mousedown = false;
 
 /* Build the functions */
@@ -41,6 +41,36 @@ function scrub(e) {
     video.currentTime = scrubTime;
 }
 
+// challenge - make video go full screen after adding fullscreen button
+function toggleFullScreen (e) {
+    if(!isFullScreen) {
+        if(!document.fullscreenElement) {
+            if(video.requestFullscreen) { // standard
+                video.requestFullscreen();
+            } else if (video.mozRequestFullScreen) { // Firefox
+                video.mozRequestFullScreen();
+            } else if (video.webkitRequestFullscreen) { // Chrome, Safari, Opera
+                video.webkitRequestFullscreen();
+            } else if (video.msRequestFullscreen) { // IE/Edge
+                video.msRequestFullscreen();
+            }
+        }
+    } else {
+        if(isFullScreen) {
+            if (document.exitFullscreen) {
+                document.exitFullscreen(); // standard
+            } else if (document.mozCancelFullScreen) { // Firefox
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) { // Chrome, Safari, Opera
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) { // IE/Edge
+                document.msExitFullscreen();
+            }
+        } 
+    }
+}
+
+
 /* Hook up the event listeners */
 video.addEventListener('click', togglePlay);
 video.addEventListener('play', updateButton);
@@ -62,15 +92,17 @@ progress.addEventListener('mousemove', (e) => mousedown && scrub(e));
 progress.addEventListener('mousedown', () => mousedown = true);
 progress.addEventListener('mouseup', () => mousedown = false);
 
-// challenge - make video go full screen after adding fullscreen button
-fullScreen.addEventListener('click', () => {
-    if(!document.fullscreenElement) {
-        if(video.requestFullscreen) {
-            video.requestFullscreen();
-        }
-    } else {
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        }
-    }  
-});
+fullScreen.addEventListener('click', toggleFullScreen );
+
+
+// fullScreen.addEventListener('click', () => {
+//     if(!document.fullscreenElement) {
+//         if(video.requestFullscreen) {
+//             video.requestFullscreen();
+//         }
+//     } else {
+//         if (document.exitFullscreen) {
+//             document.exitFullscreen();
+//         }
+//     }  
+// });
