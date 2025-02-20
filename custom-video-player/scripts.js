@@ -13,9 +13,20 @@ let isFullScreen = false;
 let mousedown = false;
 
 /* Build the functions */
+
+// Function for the Play Btn
 function togglePlay() {
     const method = video.paused ? 'play' : 'pause';
     video[method]();
+}
+
+// Function when clicking the video
+function toggleVideoPlay() {
+    if (video.paused) {
+        video.play();
+    } else {
+        video.pause();
+    }
 }
 
 function updateButton() {
@@ -42,37 +53,33 @@ function scrub(e) {
 }
 
 // challenge - make video go full screen after adding fullscreen button
-function toggleFullScreen (e) {
-    if(!isFullScreen) {
-        if(!document.fullscreenElement) {
-            if(video.requestFullscreen) { // standard
-                video.requestFullscreen();
-            } else if (video.mozRequestFullScreen) { // Firefox
-                video.mozRequestFullScreen();
-            } else if (video.webkitRequestFullscreen) { // Chrome, Safari, Opera
-                video.webkitRequestFullscreen();
-            } else if (video.msRequestFullscreen) { // IE/Edge
-                video.msRequestFullscreen();
-            }
+function toggleFullScreen() {
+    if (!document.fullscreenElement) {
+        if (video.requestFullscreen) { 
+            video.requestFullscreen();
+        } else if (video.mozRequestFullScreen) { 
+            video.mozRequestFullScreen();
+        } else if (video.webkitRequestFullscreen) { 
+            video.webkitRequestFullscreen();
+        } else if (video.msRequestFullscreen) { 
+            video.msRequestFullscreen();
         }
     } else {
-        if(isFullScreen) {
-            if (document.exitFullscreen) {
-                document.exitFullscreen(); // standard
-            } else if (document.mozCancelFullScreen) { // Firefox
-                document.mozCancelFullScreen();
-            } else if (document.webkitExitFullscreen) { // Chrome, Safari, Opera
-                document.webkitExitFullscreen();
-            } else if (document.msExitFullscreen) { // IE/Edge
-                document.msExitFullscreen();
-            }
-        } 
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) { 
+            document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) { 
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) { 
+            document.msExitFullscreen();
+        }
     }
 }
 
 
 /* Hook up the event listeners */
-video.addEventListener('click', togglePlay);
+video.addEventListener('click', toggleVideoPlay);
 video.addEventListener('play', updateButton);
 video.addEventListener('pause', updateButton);
 video.addEventListener('timeupdate', handleProgress);
@@ -92,17 +99,16 @@ progress.addEventListener('mousemove', (e) => mousedown && scrub(e));
 progress.addEventListener('mousedown', () => mousedown = true);
 progress.addEventListener('mouseup', () => mousedown = false);
 
+
+// Challenge - get into full screen
 fullScreen.addEventListener('click', toggleFullScreen );
 
-
-// fullScreen.addEventListener('click', () => {
-//     if(!document.fullscreenElement) {
-//         if(video.requestFullscreen) {
-//             video.requestFullscreen();
-//         }
-//     } else {
-//         if (document.exitFullscreen) {
-//             document.exitFullscreen();
-//         }
-//     }  
-// });
+document.addEventListener("fullscreenchange", () => {
+    if (document.fullscreenElement) {
+        console.log("Entered fullscreen");
+        video.addEventListener("click", togglePlay); // Ensure click works in fullscreen
+    } else {
+        console.log("Exited fullscreen");
+        video.removeEventListener("click", togglePlay); // Remove listener when exiting fullscreen
+    }
+});
